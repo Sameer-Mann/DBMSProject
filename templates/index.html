@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+      {% if cart==True %}
+      {% for book in books %}
+        <div class="row">
+        <div class="col-sm-2">
+          <img src="/static/book.jpg" class="card-img-top">
+        </div>
+        <div class="col-sm-6">
+        <h5>{{book.title}}</h5>
+        <h5>Author</h5>{{book.author}}
+        <h5>Price:</h5>₹{{book.price}}
+        </div>
+        </div>
+        {% if rent %}
+        <div class="col-sm-6">
+            <form method="post" action="/rent/?copies={{book.copies}}&book_id={{book.id}}">
+              <button type="submit" class="btn btn-info">Remove</button>
+            </form>
+          </div>
+        {% endif %}
+        {% endfor %}
+      {% else %}
+      <div class="row">
+        {% for book in books %}
+        <div class="card col-lg-3 col-sm-4 col-xs-12" style="display: inline-block;">
+          <img src="static/book.jpg" class="card-img-top">
+          <div class="card-body">
+            <h5 class="card-title" style="font-weight: bold;">{{book.title}}</h5>
+            <span>By:{{book.author}}</span><br>
+            {% if book.copies == 0 %}
+            <span>No copy available</span>
+            {% else %}
+            <span>Copies:{{book.copies}}</span><br>
+            {% endif %}
+            <span>Description:{{book.description}}</span><br>
+            <span>Category:{{book.category}}</span><br>
+            {% if session['student'] %}
+            <span>Price:₹{{book.price//2}}  </span><strike>{{book.price}}</strike><br>
+            <p class="text-danger">Student Discount Applied</p>
+            {% else %}
+            <span>Price:₹{{book.price}}</span><br>
+            {% endif %}
+            <form method="post" action="/buy/?copies={{book.copies}}&book_id={{book.id}}">
+              <button type="submit" class="btn btn-primary">Buy Now</button>
+            </form>
+            <form method="post" action="/rent/?copies={{book.copies}}&book_id={{book.id}}&issued=True">
+              <button type="submit" class="btn btn-info">Rent</button>
+            </form>
+            <a href="/review/{{book.id}}"><button class="btn btn-info">Reviews</button></a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+{% endblock %}

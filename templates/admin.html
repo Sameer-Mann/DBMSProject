@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Admin Portal</title>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+	<body>
+		{% if login==True %}
+		<div class="container">
+		<form action="/login_admin" method="POST">
+		    <div class="form-group">
+		        <input name="name" autofocus="True" class="form-control" placeholder="Username" type="text"/ required="True">
+		    </div>
+		    <div class="form-group">
+		        <input name="password" class="form-control" placeholder="Password" type="password"/ required="True">
+		    </div>
+		    <button class="btn btn-primary" type="submit">Log In</button>
+		</form>
+		{% elif register==True %}
+			<form action="/register_admin" method="POST">
+		        <div class="form-group">
+		            <input name="name" autofocus="True" class="form-control" placeholder="Username" type="text"/ required="True">
+		        </div>
+		        <div class="form-group">
+		            <input name="email" class="form-control" placeholder="example@gmail.com" type="text"/ required="True">
+		        </div>
+		        <div class="form-group">
+		            <input name="mobile_no" class="form-control" placeholder="+91 0123456789" type="text"/>
+		        </div>
+		        <div class="form-group">
+		            <input name="password" class="form-control" placeholder="Password" type="password"/ required="True">
+		        </div>
+		        <div class="form-group">
+		            <input name="confirm" class="form-control" placeholder="Confirm Password" type="password"/ required="True">
+		        </div>
+		        <button class="btn btn-primary" type="submit">Add</button>
+		    </form>
+		    </div>
+		   {% else %}
+		   <nav class="navbar navbar-expand-md navbar-light bg-light border">
+	      <a class="navbar-brand">{{session['admin_user']}}</a>
+	      <form class="form-inline" action="/admin/search" method="POST">
+	        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" id="search" required="True">
+	        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+	      </form>
+	      <div class="collapse navbar-collapse" id="navbar">
+	            <ul class="navbar-nav ml-auto mt-2">
+	                <li class="nav-item"><a class="nav-link" href="/admin/books">Home</a></li>
+	                <li class="nav-item"><a class="nav-link" href="/logout_admin">Logout</a></li>
+	            </ul>
+	        </div>
+	    </nav>
+<a href="/admin/issue_status"><button class="btn btn-primary">Issuing Status</button></a>
+<a href="/admin/add_book"><button class="btn btn-primary">Add Book</button></a>
+<a href="/register_admin"><button class="btn btn-primary">Add Admin User</button></a><br>
+			{% if issues %}
+			<table class="table table-stripped table-hover">
+				<thead>
+					<tr>
+					<th scope='col'>#</th>
+					<th scope='col'>Username</th>
+					<th scope='col'>Book Title</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for row in issues %}
+					<tr>
+						<th scope="row">{{row[0]}}</td>
+						<td>{{row[1]}}</td>
+						<td>{{row[2]}}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% endif %}
+
+			{% if users %}
+			<table class="table table-borderless table-hover">
+				<thead>
+					<tr scope='col'>User Id</tr>
+					<tr scope='col'>Username</tr>
+					<tr scope='col'>Email</tr>
+					<tr scope='col'>Mobile No.</tr>
+				</thead>
+				<tbody>
+					{% for user in users %}
+					<tr>
+						<th scope="row">{{user.id}}</td>
+						<td>{{user.username}}</td>
+						<td>{{row.email}}</td>
+						<td>{{row.mobile_no}}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% endif %}
+
+			{% if books %}
+			<div class="row">
+				{% for book in books %}
+		      	<div class="card col-lg-3 col-sm-4 col-xs-12" style="display: inline-block;">
+			        <img src="/static/book.jpg" class="card-img-top">
+			        <div class="card-body">
+			        	<h5 class="card-title" style="font-weight: bold;">{{book.title}}</h5>
+			        	<span>By:{{book.author}}</span><br>
+			          	{% if book.copies == 0 %}
+			          	<span>No copy available</span>
+			          	{% else %}
+			          	<span>Copies:{{book.copies}}</span><br>
+			          	{% endif %}
+			          	<span>Description:{{book.description}}</span><br>
+			          	<span>Category:{{book.category}}</span><br>
+			          	<span>Price:₹{{book.price}}</span><br>
+			          	<div class="col-sm-6">
+							<form method="post" action="/admin/remove_book?book_id={{book.id}}">
+			                	<button type="submit" class="btn btn-danger">Remove</button>
+			              	</form>
+			        	</div>
+			        </div>
+			    </div>
+		        {% endfor %}
+		     </div>
+	        {% endif %}
+		{% endif %}
+		<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	</body>
+</html>
